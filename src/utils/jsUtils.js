@@ -1,6 +1,11 @@
 
 export const getRoute = () => {
-	return window.location.href.split('/').pop();
+	const route = window.location.href.split('/').pop();
+	if (['gltfloading', 'lightsncam', 'tankntarget', 'scenegraph', 'cubes', 'primitives', 'empty'].indexOf(route) !== -1) {
+		return route
+	} else {
+		return null
+	}
 }
 
 export const setRoute = (route) => {
