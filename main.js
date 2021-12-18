@@ -20,7 +20,6 @@ import {
 } from './src/utils/gfxUtils';
 
 import {
-	getRoute,
 	setRoute
 } from './src/utils/jsUtils';
 
@@ -81,17 +80,11 @@ const switchView = (id) => {
 		default:
 			break;
 	}
-	setRoute(id);
 	activateButton(document.getElementById(id));
 }
 
 //set initial view
-const route = getRoute();
-if (route) {
-	switchView(route);
-} else {
-	switchView('gltfloading');
-}
+switchView('gltfloading');
 
 const renderLoop = (ms) => {
 	const time = ms * 0.001;
