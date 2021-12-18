@@ -1,0 +1,64 @@
+
+* {
+	font-family: monospace;
+	font-size: 14px;
+}
+
+.nav-area {
+	position: fixed;
+	padding: 1rem;
+}
+
+.nav-buttons {
+	display: flex;
+}
+
+.nav-buttons li {
+	display: flex;
+	align-items: center;
+	background-color: lightblue;
+	font-weight: bold;
+	padding: 0.4rem;
+}
+
+button {
+	background-color: inherit;
+	border: none;
+	color: navy;
+	text-shadow: 2px 2px 2px #ababab;
+}
+
+button, input[type=checkbox] {
+	cursor: pointer;
+}
+
+button.active {
+	color: #2222FF;
+	text-shadow: 2px 2px 2px #fff;
+}
+
+#canvas-threejs {
+	width: 100%;
+	height: 100%;
+	display: block;
+}
+
+#container-controls {
+	position: absolute;
+    top: 65px;
+	padding: 1rem;
+}
+
+#info {
+	color: red
+}
+
+#devinfo {
+	position: absolute;
+	right: 20px;
+	top: 20px;
+	padding: 20px;
+	background: rgba(255,255,255,.8);
+	border-radius: 50%;
+	font-weight: bold;
+}

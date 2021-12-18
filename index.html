@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<link rel="icon" type="image/png" href="favicon.png" />
+	<!-- <meta name="viewport" content="width=device-width, initial-scale=1.0" /> -->
+	<title>Three.js Fundamentals | Barış Ürüm</title>
+	<link rel="stylesheet" href="/reset.css" />
+	<link rel="stylesheet" href="/styles.css" />
+
+	<meta property="og:image" content="/resources/img/threejs-fundamentals-og.jpg" />
+	<meta property="og:title" content="Three.js Fundamentals" />
+	<meta property="og:description"
+		content="A case study of several example scenes from three.js manual implemented by Barış Ürüm" />
+	<meta property="og:image:width" content="880" />
+	<meta property="og:image:height" content="880" />
+</head>
+
+<body>
+	<main>
+		<div class="nav-area">
+			<ul class="nav-buttons">
+				<li>
+					<button id="gltfloading">GLTF Loading</button>
+				</li>
+				<li>
+					<button id="lightsncam">Lights & Cam</button>
+				</li>
+				<li>
+					<button id="tankntarget">Tank & Target</button>
+				</li>
+				<li>
+					<button id="scenegraph">Scenegraph</button>
+				</li>
+				<li>
+					<button id="cubes">Cubes</button>
+				</li>
+				<li>
+					<button id="primitives">Primitives</button>
+				</li>
+				<li>
+					<button id="empty">Empty</button>
+				</li>
+				<li>
+					<input id="show-axes" type="checkbox" /> &nbsp;Show Axes
+				</li>
+				<li>
+					<input id="show-grid-controls" type="checkbox" /> &nbsp;Grid Controls
+				</li>
+			</ul>
+			<div id="info"></div>
+		</div>
+		<div id="container-controls"></div>
+		<canvas id="canvas-threejs"></canvas>
+		<div id="devinfo">
+			<span>Barış Ürüm 2021</span>
+			<a href="https://github.com/burumdev" target="_blank" rel="noopener">GitHub</a>
+		</div>
+	</main>
+	<script type="module" src="/main.js"></script>
+</body>
+
+</html>
