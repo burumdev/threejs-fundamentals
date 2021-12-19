@@ -222,7 +222,7 @@ class GLTFLoading extends BaseView {
 	toggleGridControls(show) {
 		if (show) {
 			this.gui = new GUI({
-				title: 'Lights & Cam Grid Controls',
+				title: 'GLTF Loading Grid Controls',
 				container: document.getElementById('container-controls')
 			});
 
