@@ -49,30 +49,31 @@ class GLTFLoading extends BaseView {
 		this.canvas = canvas;
 
 		this.textures = {};
-		this.models = {};
+		this.objects = {};
 		this.groundSize = 120;
 
 		this.texLoadManager = new LoadingManager();
 		this.loadTextures();
-		this.modelLoadManager = new LoadingManager();
-		this.loadModels();
 
 		this.texLoadManager.onProgress = (urlOfLastItemLoaded, itemsLoaded, itemsTotal) => {
 			const progress = (itemsLoaded / itemsTotal) * 100;
 			this.infoElem.textContent = 'Loading textures... % ' + progress;
 		};
 
-		this.modelLoadManager.onProgress = (urlOfLastItemLoaded, itemsLoaded, itemsTotal) => {
-			const progress = (itemsLoaded / itemsTotal) * 100;
-			this.infoElem.textContent = 'Loading car model... % ' + progress;
-		};
-
 		this.texLoadManager.onLoad = () => {
+			this.infoElem.textContent = 'Loading car model...';
+			this.modelLoadManager = new LoadingManager();
+			this.loadModels();
+
+			this.modelLoadManager.onProgress = (urlOfLastItemLoaded, itemsLoaded, itemsTotal) => {
+				const progress = (itemsLoaded / itemsTotal) * 100;
+				this.infoElem.textContent = 'Loading car model... % ' + progress;
+			};
+
 			this.modelLoadManager.onLoad = () => {
 				this.infoElem.textContent = 'Car model by mikepan CC-BY-SA. Exported as GLTF with Blender.';
 
 				this.lights = {};
-				this.objects = {};
 				this.layoutObjects = {};
 				this.materials = {};
 				this.positions = {};
@@ -114,7 +115,7 @@ class GLTFLoading extends BaseView {
 		const gltfLoader = new GLTFLoader(this.modelLoadManager);
 		const url = 'resources/models/BMW1M/BMW1M.glb';
 		gltfLoader.load(url, (gltf) => {
-			this.models.car = gltf.scene;
+			this.objects.car = gltf.scene;
 		});
 	}
 
@@ -200,15 +201,14 @@ class GLTFLoading extends BaseView {
 		this.materials.ground = groundMat;
 		this.objects.ground = groundMesh;
 
-		this.models.car.traverse(node => {
+		this.objects.car.traverse(node => {
 			if (node.isMesh) {
 				node.castShadow = true;
 			}
 		})
-		this.models.car.position.y = 0.15;
-		this.models.car.name = 'Car';
-		this.objects.car = this.models.car;
-		this.scene.add(this.models.car);
+		this.objects.car.position.y = 0.15;
+		this.objects.car.name = 'Car';
+		this.scene.add(this.objects.car);
 	}
 
 	toggleAxes(show) {
