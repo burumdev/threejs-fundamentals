@@ -57,6 +57,10 @@ class BaseView {
 		if (this.canAnimate) {
 			this.animate(time);
 		}
+
+		if (this.controls && !this.isLooped) {
+			this.controls.update();
+		}
 		//render it
 		this.renderer.render(this.scene, this.activeCamera);
 	}

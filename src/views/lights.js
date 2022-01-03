@@ -193,6 +193,7 @@ class Lights extends BaseView {
 		this.controls.target.set(0, 0, 0);
 
 		this.controls.addEventListener('change', this.renderOnDemand);
+		this.controls.enableDamping = true;
 		this.controls.update();
 	}
 
