@@ -19,10 +19,6 @@ import {
 	updateAspectRatio,
 } from './src/utils/gfxUtils';
 
-import {
-	setRoute
-} from './src/utils/jsUtils';
-
 //flags
 let flags = {
 	showAxes: false,

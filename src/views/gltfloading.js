@@ -74,9 +74,6 @@ class GLTFLoading extends BaseView {
 				this.infoElem.textContent = 'Car model by mikepan CC-BY-SA. Exported as GLTF with Blender.';
 
 				this.lights = {};
-				this.layoutObjects = {};
-				this.materials = {};
-				this.positions = {};
 
 				this.setScene();
 				this.drawObjects();
@@ -142,12 +139,6 @@ class GLTFLoading extends BaseView {
 			const intensity = .35;
 			const light = new DirectionalLight(color, intensity);
 			light.castShadow = true;
-			const d = 100;
-
-			light.shadow.camera.left = - d;
-			light.shadow.camera.right = d;
-			light.shadow.camera.top = d;
-			light.shadow.camera.bottom = - d;
 
 			light.position.set(0, 11, -10);
 			light.target.position.set(0, 0, 6.34);
@@ -198,7 +189,6 @@ class GLTFLoading extends BaseView {
 		this.scene.add(groundMesh);
 		groundMesh.name = 'Ground';
 
-		this.materials.ground = groundMat;
 		this.objects.ground = groundMesh;
 
 		this.objects.car.traverse(node => {

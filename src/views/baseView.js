@@ -22,11 +22,13 @@ class BaseView {
 	}
 
 	updateFlags(flags) {
-		if (flags.showAxes !== this.flags.showAxes) {
-			this.toggleAxes(flags.showAxes);
-		}
-		if (flags.showGridControls !== this.flags.showGridControls) {
-			this.toggleGridControls(flags.showGridControls);
+		if (this.flags) {
+			if (flags.showAxes !== this.flags.showAxes) {
+				this.toggleAxes(flags.showAxes);
+			}
+			if (flags.showGridControls !== this.flags.showGridControls) {
+				this.toggleGridControls(flags.showGridControls);
+			}
 		}
 		this.flags = flags;
 	}
@@ -39,15 +41,12 @@ class BaseView {
 	}
 
 	toggleAxes() {
-		return;
 	}
 
 	toggleGridControls() {
-		return;
 	}
 
 	animate() {
-		return;
 	}
 }
 
