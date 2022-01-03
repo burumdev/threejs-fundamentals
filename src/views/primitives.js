@@ -54,10 +54,9 @@ import {
 import BaseView from './baseView';
 
 class Primitives extends BaseView {
-	constructor(flags, canvas) {
-		super(flags);
+	constructor(renderer, flags) {
+		super(renderer, flags);
 
-		this.canvas = canvas;
 		this.setScene();
 
 		this.objects = [];
@@ -66,6 +65,8 @@ class Primitives extends BaseView {
 		this.drawObjects();
 
 		this.canAnimate = true;
+		this.isLooped = true;
+		this.startLoop();
 
 		this.toggleAxes(flags.showAxes);
 		this.toggleGridControls(flags.showGridControls);

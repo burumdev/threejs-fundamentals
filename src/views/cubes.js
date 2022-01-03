@@ -25,18 +25,18 @@ import {
 import BaseView from './baseView';
 
 class Cubes extends BaseView {
-	constructor(flags, canvas) {
-		super(flags);
+	constructor(renderer, flags) {
+		super(renderer, flags);
 
-		this.canvas = canvas;
 		this.setScene();
 
-		//geometry
 		this.cubeGeometry = new BoxGeometry(1, 1, 1);
 
 		this.drawCubes();
 
 		this.canAnimate = true;
+		this.isLooped = true;
+		this.startLoop();
 
 		this.toggleAxes(flags.showAxes);
 		this.toggleGridControls(flags.showGridControls);

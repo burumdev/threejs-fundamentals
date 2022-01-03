@@ -44,11 +44,10 @@ import {
 import BaseView from './baseView';
 
 class TankNTarget extends BaseView {
-	constructor(flags, canvas) {
-		super(flags);
+	constructor(renderer, flags) {
+		super(renderer, flags);
 		this.infoElem = document.querySelector('#info');
 
-		this.canvas = canvas;
 		this.textures = {};
 
 		this.loadManager = new LoadingManager();
@@ -74,6 +73,8 @@ class TankNTarget extends BaseView {
 			this.drawObjects();
 
 			this.canAnimate = true;
+			this.isLooped = true;
+			this.startLoop();
 
 			this.toggleAxes(this.flags.showAxes);
 			this.toggleGridControls(this.flags.showGridControls);
@@ -196,7 +197,7 @@ class TankNTarget extends BaseView {
 			[-carWidth / 2 - wheelThickness / 2, -carHeight / 2, -carLength / 3],
 			[carWidth / 2 + wheelThickness / 2, -carHeight / 2, -carLength / 3],
 		];
-		const wheelMeshes = wheelPositions.map((position, index) => {
+		wheelPositions.forEach((position, index) => {
 			const mesh = new Mesh(wheelGeometry, wheelMaterial);
 			mesh.position.set(...position);
 			mesh.rotation.z = Math.PI * .5;
@@ -204,7 +205,6 @@ class TankNTarget extends BaseView {
 			bodyMesh.add(mesh);
 			mesh.name = 'Wheel No. ' + (index + 1);
 			this.objects['wheel' + (index)] = mesh;
-			return mesh;
 		});
 
 		const domeRadius = 2;

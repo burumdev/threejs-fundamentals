@@ -42,11 +42,10 @@ import {
 import BaseView from './baseView';
 
 class GLTFLoading extends BaseView {
-	constructor(flags, canvas) {
-		super(flags);
+	constructor(renderer, flags) {
+		super(renderer, flags);
 
 		this.infoElem = document.querySelector('#info');
-		this.canvas = canvas;
 
 		this.textures = {};
 		this.objects = {};
@@ -79,6 +78,7 @@ class GLTFLoading extends BaseView {
 				this.drawObjects();
 
 				this.canAnimate = true;
+				this.renderOnDemand();
 
 				this.toggleAxes(this.flags.showAxes);
 				this.toggleGridControls(this.flags.showGridControls);
@@ -172,6 +172,8 @@ class GLTFLoading extends BaseView {
 
 		this.controls = new OrbitControls(this.activeCamera, this.canvas);
 		this.controls.target.set(0, .5, 0);
+		this.controls.enableDamping = true;
+		this.controls.addEventListener('change', this.renderOnDemand);
 		this.controls.update();
 	}
 
@@ -232,8 +234,9 @@ class GLTFLoading extends BaseView {
 	lightSettingsGUI() {
 		this.liGUI = new GUI({
 			title: 'Light Settings',
-			container: document.getElementById('container-controls')
-		})
+			container: document.getElementById('container-controls'),
+		}).onChange(this.renderOnDemand);
+
 		this.liHemGUI = new GUI({
 			title: 'Hemisphere Light',
 			parent: this.liGUI
@@ -251,12 +254,21 @@ class GLTFLoading extends BaseView {
 			parent: this.liGUI
 		}).close()
 
-		this.liHemGUI.addColor(new ColorGUIHelper(this.lights.hemLight, 'color'), 'value').name('skyColor');
-		this.liHemGUI.addColor(new ColorGUIHelper(this.lights.hemLight, 'groundColor'), 'value').name('groundColor');
-		this.liHemGUI.add(this.lights.hemLight, 'intensity', 0, 2, 0.01);
+		this.liHemGUI
+			.addColor(new ColorGUIHelper(this.lights.hemLight, 'color'), 'value')
+			.name('skyColor');
 
-		this.liDirectGUI.addColor(new ColorGUIHelper(this.lights.dirLight, 'color'), 'value').name('color');
-		this.liDirectGUI.add(this.lights.dirLight, 'intensity', 0, 2, 0.01);
+		this.liHemGUI
+			.addColor(new ColorGUIHelper(this.lights.hemLight, 'groundColor'), 'value')
+			.name('groundColor');
+
+		this.liHemGUI.add(this.lights.hemLight, 'intensity', 0, 2, 0.01)
+
+		this.liDirectGUI
+			.addColor(new ColorGUIHelper(this.lights.dirLight, 'color'), 'value')
+			.name('color');
+
+		this.liDirectGUI.add(this.lights.dirLight, 'intensity', 0, 2, 0.01)
 
 		makeXYZGUI(
 			this.liDirectGUI,
@@ -265,8 +277,12 @@ class GLTFLoading extends BaseView {
 			() => updateLight(this.lights.dirLight, this.dirLightHelper)
 		)
 
-		this.liPointGUI.addColor(new ColorGUIHelper(this.lights.pLight, 'color'), 'value').name('color');
-		this.liPointGUI.add(this.lights.pLight, 'intensity', 0, 2, 0.01);
+		this.liPointGUI
+			.addColor(new ColorGUIHelper(this.lights.pLight, 'color'), 'value')
+			.name('color');
+
+		this.liPointGUI.add(this.lights.pLight, 'intensity', 0, 2, 0.01)
+
 		this.liPointGUI.add(this.lights.pLight, 'distance', 0, 120)
 			.onChange(() => updateLight(this.lights.pLight, this.pLightHelper));
 
@@ -284,11 +300,15 @@ class GLTFLoading extends BaseView {
 			() => updateLight(this.lights.dirLight, this.dirLightHelper)
 		);
 
-		this.liSpotGUI.addColor(new ColorGUIHelper(this.lights.sLight, 'color'), 'value').name('color');
-		this.liSpotGUI.add(this.lights.sLight, 'intensity', 0, 2, 0.01);
+		this.liSpotGUI
+			.addColor(new ColorGUIHelper(this.lights.sLight, 'color'), 'value')
+			.name('color');
+
+		this.liSpotGUI.add(this.lights.sLight, 'intensity', 0, 2, 0.01).onChange(this.renderOnDemand);
 		this.liSpotGUI.add(new DegRadHelper(this.lights.sLight, 'angle'), 'value', 0, 90)
 			.name('angle')
 			.onChange(() => updateLight(this.lights.sLight, this.sLightHelper));
+
 		this.liSpotGUI.add(this.lights.sLight, 'penumbra', 0, 1, 0.01);
 
 		makeXYZGUI(
@@ -310,10 +330,11 @@ class GLTFLoading extends BaseView {
 		this.camGUI = new GUI({
 			title: 'Camera Settings',
 			container: document.getElementById('container-controls')
-		});
+		}).onChange(this.renderOnDemand);
 
 		const camera = this.activeCamera;
 		this.camGUI.add(camera, 'fov', 1, 180).onChange(() => updateCamera(camera));
+
 		const minMaxGUIHelper = new MinMaxGUIHelper(camera, 'near', 'far', 0.1);
 		this.camGUI.add(minMaxGUIHelper, 'min', 0.1, 200, 0.1).name('near').onChange(() => updateCamera(camera));
 		this.camGUI.add(minMaxGUIHelper, 'max', 0.1, 200, 0.1).name('far').onChange(() => updateCamera(camera));
@@ -323,7 +344,8 @@ class GLTFLoading extends BaseView {
 		this.carGUI = new GUI({
 			title: 'Car Settings',
 			container: document.getElementById('container-controls')
-		});
+		}).onChange(this.renderOnDemand);
+
 		const carShell = this.objects.car.getObjectByName('carShell')
 		this.carGUI.addColor(new ColorGUIHelper(carShell.material, 'color'), 'value').name('Color');
 		this.carGUI.add(carShell.material, 'metalness', 0, 1).name('Metalness');

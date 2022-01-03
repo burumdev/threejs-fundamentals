@@ -27,11 +27,10 @@ import {
 import BaseView from './baseView';
 
 class Scenegraph extends BaseView {
-	constructor(flags, canvas) {
-		super(flags);
+	constructor(renderer, flags) {
+		super(renderer, flags);
 
 		this.infoElem = document.querySelector('#info');
-		this.canvas = canvas;
 
 		this.textures = {};
 		this.loadManager = new LoadingManager();
@@ -51,6 +50,8 @@ class Scenegraph extends BaseView {
 			this.drawObjects();
 
 			this.canAnimate = true;
+			this.isLooped = true;
+			this.startLoop();
 
 			this.toggleAxes(this.flags.showAxes);
 			this.toggleGridControls(this.flags.showGridControls);

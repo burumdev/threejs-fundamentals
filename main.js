@@ -14,11 +14,6 @@ import {
 	GLTFLoading
 } from './src/views';
 
-import {
-	resizeRendererToDisplaySize,
-	updateAspectRatio,
-} from './src/utils/gfxUtils';
-
 //flags
 let flags = {
 	showAxes: false,
@@ -53,25 +48,25 @@ const switchView = (id) => {
 	document.querySelector('#info').textContent = '';
 	switch (id) {
 		case 'gltfloading':
-			activeView = new GLTFLoading(flags, canvas);
+			activeView = new GLTFLoading(renderer, flags);
 			break;
 		case 'lightsncam':
-			activeView = new Lights(flags, canvas);
+			activeView = new Lights(renderer, flags);
 			break;
 		case 'tankntarget':
-			activeView = new TankNTarget(flags, canvas);
+			activeView = new TankNTarget(renderer, flags);
 			break;
 		case 'scenegraph':
-			activeView = new Scenegraph(flags, canvas);
+			activeView = new Scenegraph(renderer, flags);
 			break;
 		case 'cubes':
-			activeView = new Cubes(flags, canvas);
+			activeView = new Cubes(renderer, flags);
 			break;
 		case 'primitives':
-			activeView = new Primitives(flags, canvas);
+			activeView = new Primitives(renderer, flags);
 			break;
 		case 'empty':
-			activeView = new Empty(flags);
+			activeView = new Empty(renderer, flags);
 			break;
 		default:
 			break;
@@ -82,28 +77,6 @@ const switchView = (id) => {
 //set initial view
 switchView('gltfloading');
 
-const renderLoop = (ms) => {
-	const time = ms * 0.001;
-
-	if (activeView) {
-		//adjust view to resized window
-		if (resizeRendererToDisplaySize(renderer)) {
-			updateAspectRatio(renderer, activeView.activeCamera);
-		}
-		//animate the active scene
-		if (activeView.canAnimate) {
-			activeView.animate(time);
-		}
-		//render it
-		renderer.render(activeView.scene, activeView.activeCamera);
-	}
-
-	requestAnimationFrame(renderLoop);
-}
-
-//init main loop
-requestAnimationFrame(renderLoop);
-
 //events
 buttons.forEach(btn => {
 	btn.addEventListener('click', (e) => {
@@ -113,7 +86,6 @@ buttons.forEach(btn => {
 		activateButton(button);
 
 		if (activeView) {
-			updateAspectRatio(renderer, activeView.activeCamera);
 			activeView.destroy();
 		}
 

@@ -50,11 +50,10 @@ import {
 import BaseView from './baseView';
 
 class Lights extends BaseView {
-	constructor(flags, canvas) {
-		super(flags);
+	constructor(renderer, flags) {
+		super(renderer, flags)
 
 		this.infoElem = document.querySelector('#info');
-		this.canvas = canvas;
 
 		this.textures = {};
 		this.groundSize = 120;
@@ -80,6 +79,7 @@ class Lights extends BaseView {
 			this.drawObjects();
 
 			this.canAnimate = true;
+			this.renderOnDemand();
 
 			this.toggleAxes(this.flags.showAxes);
 			this.toggleGridControls(this.flags.showGridControls);
@@ -191,6 +191,8 @@ class Lights extends BaseView {
 		this.scene.fog = new Fog('lightblue', 10, 80)
 		this.controls = new OrbitControls(this.activeCamera, this.canvas);
 		this.controls.target.set(0, 0, 0);
+
+		this.controls.addEventListener('change', this.renderOnDemand);
 		this.controls.update();
 	}
 
@@ -285,7 +287,7 @@ class Lights extends BaseView {
 		this.liGUI = new GUI({
 			title: 'Light Settings',
 			container: document.getElementById('container-controls')
-		})
+		}).onChange(this.renderOnDemand);
 		this.liDiffuseGUI = new GUI({
 			title: 'Diffuse Light',
 			parent: this.liGUI
@@ -369,24 +371,13 @@ class Lights extends BaseView {
 		this.camGUI = new GUI({
 			title: 'Camera Settings',
 			container: document.getElementById('container-controls')
-		});
+		}).onChange(this.renderOnDemand);
 
 		const camera = this.activeCamera;
 		this.camGUI.add(camera, 'fov', 1, 180).onChange(() => updateCamera(camera));
 		const minMaxGUIHelper = new MinMaxGUIHelper(camera, 'near', 'far', 0.1);
 		this.camGUI.add(minMaxGUIHelper, 'min', 0.1, 200, 0.1).name('near').onChange(() => updateCamera(camera));
 		this.camGUI.add(minMaxGUIHelper, 'max', 0.1, 200, 0.1).name('far').onChange(() => updateCamera(camera));
-	}
-
-	animate(time) {
-		const integer = Math.floor(time);
-		let decimal = time - integer;
-		if (integer % 2 === 0) {
-			decimal = (1 - decimal) / 4;
-		} else {
-			decimal /= 4;
-		}
-		this.objects.sphere.material.emissiveIntensity = decimal;
 	}
 
 	destroy() {
