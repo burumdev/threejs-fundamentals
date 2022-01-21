@@ -45,6 +45,7 @@ import {
 
 import {
 	asArray,
+	loadManagerPercent
 } from '../utils/jsUtils';
 
 import BaseView from './baseView';
@@ -59,12 +60,12 @@ class Lights extends BaseView {
 		this.groundSize = 120;
 
 		this.loadManager = new LoadingManager();
-		this.loadTextures();
-
 		this.loadManager.onProgress = (urlOfLastItemLoaded, itemsLoaded, itemsTotal) => {
-			const progress = (itemsLoaded / itemsTotal) * 100;
+			const progress = loadManagerPercent(itemsLoaded, itemsTotal);
 			this.infoElem.textContent = 'Loading textures... % ' + progress;
 		};
+
+		this.loadTextures();
 
 		this.loadManager.onLoad = () => {
 			this.infoElem.textContent = '';
@@ -81,11 +82,11 @@ class Lights extends BaseView {
 			this.canAnimate = true;
 			this.renderOnDemand();
 
-			this.toggleAxes(this.flags.showAxes);
-			this.toggleGridControls(this.flags.showGridControls);
-
 			this.lightSettingsGUI();
 			this.cameraSettingsGUI();
+
+			this.toggleAxes(this.flags.showAxes);
+			this.toggleGridControls(this.flags.showGridControls);
 		}
 	}
 
@@ -258,9 +259,9 @@ class Lights extends BaseView {
 
 	toggleAxes(show) {
 		if (show) {
-			addAxes(asArray(this.objects));
+			addAxes(asArray(this.objects), this.renderOnDemand);
 		} else {
-			removeAxes(asArray(this.objects));
+			removeAxes(asArray(this.objects), this.renderOnDemand);
 		}
 	}
 
@@ -269,7 +270,7 @@ class Lights extends BaseView {
 			this.gui = new GUI({
 				title: 'Lights & Cam Grid Controls',
 				container: document.getElementById('container-controls')
-			});
+			}).onChange(this.renderOnDemand);
 
 			asArray(this.objects).forEach(obj => {
 				addGridControls(this.gui, obj, obj.name);

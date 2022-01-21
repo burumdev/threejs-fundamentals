@@ -37,6 +37,7 @@ import {
 
 import {
 	asArray,
+	loadManagerPercent
 } from '../utils/jsUtils';
 
 import BaseView from './baseView';
@@ -51,25 +52,23 @@ class GLTFLoading extends BaseView {
 		this.objects = {};
 		this.groundSize = 120;
 
-		this.texLoadManager = new LoadingManager();
-		this.loadTextures();
-
-		this.texLoadManager.onProgress = (urlOfLastItemLoaded, itemsLoaded, itemsTotal) => {
-			const progress = (itemsLoaded / itemsTotal) * 100;
+		this.loadManager = new LoadingManager();
+		this.loadManager.onProgress = (urlOfLastItemLoaded, itemsLoaded, itemsTotal) => {
+			const progress = loadManagerPercent(itemsLoaded, itemsTotal);
 			this.infoElem.textContent = 'Loading textures... % ' + progress;
 		};
 
-		this.texLoadManager.onLoad = () => {
-			this.infoElem.textContent = 'Loading car model...';
-			this.modelLoadManager = new LoadingManager();
-			this.loadModels();
+		this.loadTextures();
 
-			this.modelLoadManager.onProgress = (urlOfLastItemLoaded, itemsLoaded, itemsTotal) => {
-				const progress = (itemsLoaded / itemsTotal) * 100;
+		this.loadManager.onLoad = () => {
+			this.infoElem.textContent = 'Loading car model...';
+			this.loadManager.onProgress = (urlOfLastItemLoaded, itemsLoaded, itemsTotal) => {
+				const progress = loadManagerPercent(itemsLoaded, itemsTotal);
 				this.infoElem.textContent = 'Loading car model... % ' + progress;
 			};
+			this.loadModels();
 
-			this.modelLoadManager.onLoad = () => {
+			this.loadManager.onLoad = () => {
 				this.infoElem.textContent = 'Car model by mikepan CC-BY-SA. Exported as GLTF with Blender.';
 
 				this.lights = {};
@@ -80,18 +79,18 @@ class GLTFLoading extends BaseView {
 				this.canAnimate = true;
 				this.renderOnDemand();
 
-				this.toggleAxes(this.flags.showAxes);
-				this.toggleGridControls(this.flags.showGridControls);
-
 				this.lightSettingsGUI();
 				this.cameraSettingsGUI();
 				this.carSettingsGUI();
+
+				this.toggleAxes(this.flags.showAxes);
+				this.toggleGridControls(this.flags.showGridControls);
 			}
 		}
 	}
 
 	loadTextures() {
-		const texLoader = new TextureLoader(this.texLoadManager);
+		const texLoader = new TextureLoader(this.loadManager);
 
 		this.textures.groundDiffuse = texLoader.load('resources/textures/floor-diffuse-512.jpg');
 		this.textures.groundNormal = texLoader.load('resources/textures/floor-normal-512.jpg');
@@ -109,7 +108,7 @@ class GLTFLoading extends BaseView {
 	}
 
 	loadModels() {
-		const gltfLoader = new GLTFLoader(this.modelLoadManager);
+		const gltfLoader = new GLTFLoader(this.loadManager);
 		const url = 'resources/models/BMW1M/BMW1M.glb';
 		gltfLoader.load(url, (gltf) => {
 			this.objects.car = gltf.scene;
@@ -205,9 +204,9 @@ class GLTFLoading extends BaseView {
 
 	toggleAxes(show) {
 		if (show) {
-			addAxes(asArray(this.objects));
+			addAxes(asArray(this.objects), this.renderOnDemand);
 		} else {
-			removeAxes(asArray(this.objects));
+			removeAxes(asArray(this.objects), this.renderOnDemand);
 		}
 	}
 
@@ -216,7 +215,7 @@ class GLTFLoading extends BaseView {
 			this.gui = new GUI({
 				title: 'GLTF Loading Grid Controls',
 				container: document.getElementById('container-controls')
-			});
+			}).onChange(this.renderOnDemand);
 
 			asArray(this.objects).forEach(obj => {
 				addGridControls(this.gui, obj, obj.name);

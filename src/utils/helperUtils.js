@@ -10,7 +10,7 @@ import {
 } from './gfxUtils';
 
 // axes
-export const addAxes = (objects) => {
+export const addAxes = (objects, cb = null) => {
 	objects.forEach((node) => {
 		if (node.type === 'Mesh') {
 			const axes = new AxesHelper(10);
@@ -19,9 +19,13 @@ export const addAxes = (objects) => {
 			node.add(axes);
 		}
 	});
+
+	if (cb && typeof cb === 'function') {
+		cb();
+	}
 }
 
-export const removeAxes = (objects) => {
+export const removeAxes = (objects, cb = null) => {
 	objects.forEach((node) => {
 		if (node.type === 'Mesh') {
 			node.children.forEach(chi => {
@@ -32,6 +36,10 @@ export const removeAxes = (objects) => {
 			})
 		}
 	});
+
+	if (cb && typeof cb === 'function') {
+		cb();
+	}
 }
 
 // grids
